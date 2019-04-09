@@ -30,13 +30,7 @@ namespace StudentExercisesMVC.Models
             get { return $"{FirstName} {LastName}"; }
         }
 
-        /*public Student(string firstName, string lastName, string slackHandle, int Cohort) {
-            FirstName = firstName;
-            LastName = lastName;
-            SlackHandle = slackHandle;
-            CohortId = Cohort;
-            ExerciseList = new List<Exercise>();
-        }*/
+       
     }
 
 }

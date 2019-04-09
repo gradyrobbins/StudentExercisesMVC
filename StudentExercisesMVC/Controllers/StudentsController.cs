@@ -43,10 +43,9 @@ namespace StudentExercisesMVC.Controllers
       ,[SlackHandle]
       ,[CohortId]
 	  ,[Name]
-  FROM [StudentExercises].[dbo].[Student] s
-  INNER JOIN [StudentExercises].[dbo].Cohort c
+  FROM Student s
+  INNER JOIN Cohort c
   ON s.CohortId = c.Id;
-  
         ";
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -85,14 +84,20 @@ namespace StudentExercisesMVC.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-            SELECT s.Id,
-                s.FirstName,
-                s.LastName,
-                s.SlackHandle,
-                s.CohortId
-            FROM Student s
-            WHERE s.id = @Id";
-                    cmd.Parameters.Add(new SqlParameter("@Id", id));
+                                         SELECT  s.Id
+                                                 ,s.FirstName
+                                                 ,s.LastName
+                                                 ,s.SlackHandle
+                                                 ,s.CohortId
+	                                             ,c.Name
+                                         FROM Student s
+                                           
+                                         LEFT JOIN Cohort c
+                                         ON s.CohortId = c.Id
+                                            WHERE s.Id = @id
+                                         ;
+                ";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
 
 
 
@@ -101,32 +106,39 @@ namespace StudentExercisesMVC.Controllers
 
 
                     Student student = null;
-                        while (reader.Read())
-                        {
-                        student = new Student
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                            SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
-                            CohortId = reader.GetInt32(reader.GetOrdinal("CohortId"))
-                        };
-                            
-                        };
-                    
+                    while (reader.Read())
+                    {
 
-                    reader.Close();
+                        
+                            student = new Student
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
+                                CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
+                                Cohort = new Cohort
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("CohortId")),
+                                    CohortName = reader.GetString(reader.GetOrdinal("Name"))
+                                }
+                            };
+                        
+                    }
+                        reader.Close();
 
-                    return View(student);
+                        return View(student);
+                    }
                 }
             }
-        }
+        
+        
 
-        // GET: Students/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+            // GET: Students/Create
+            public ActionResult Create()
+            {
+                return View();
+            } 
 
         // POST: Students/Create
         [HttpPost]
