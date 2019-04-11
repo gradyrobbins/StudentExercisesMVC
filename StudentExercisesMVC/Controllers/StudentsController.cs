@@ -62,7 +62,7 @@ namespace StudentExercisesMVC.Controllers
                             CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
                             Cohort = new Cohort {
                                 Id = reader.GetInt32(reader.GetOrdinal("CohortId")),
-                                CohortName = reader.GetString(reader.GetOrdinal("Name"))
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
                             }
                         };
 
@@ -121,7 +121,7 @@ namespace StudentExercisesMVC.Controllers
                                 Cohort = new Cohort
                                 {
                                     Id = reader.GetInt32(reader.GetOrdinal("CohortId")),
-                                    CohortName = reader.GetString(reader.GetOrdinal("Name"))
+                                    Name = reader.GetString(reader.GetOrdinal("Name"))
                                 }
                             };
                         
@@ -132,25 +132,43 @@ namespace StudentExercisesMVC.Controllers
                     }
                 }
             }
-        
-        
 
-            // GET: Students/Create
-            public ActionResult Create()
+
+
+        // GET: Students/Create
+        public ActionResult Create()
+        {
             {
-                return View();
-            } 
+                StudentCreateViewModel viewModel =
+                    new StudentCreateViewModel(_config.GetConnectionString("DefaultConnection"));
+                return View(viewModel);
+            }
+        }
 
         // POST: Students/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(StudentCreateViewModel viewModel)
         {
             try
             {
-                // TODO: Add insert logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO student (firstname, lastname, slackhandle, cohortid)
+                                           VALUES (@firstname, @lastname, @slackhandle, @cohortid)";
+                        cmd.Parameters.Add(new SqlParameter("@firstname", viewModel.Student.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@lastname", viewModel.Student.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@slackhandle", viewModel.Student.SlackHandle));
+                        cmd.Parameters.Add(new SqlParameter("@cohortid", viewModel.Student.CohortId));
 
-                return RedirectToAction(nameof(Index));
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {
@@ -259,7 +277,7 @@ namespace StudentExercisesMVC.Controllers
                             Cohort = new Cohort
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("CohortId")),
-                                CohortName = reader.GetString(reader.GetOrdinal("CohortName"))
+                                Name = reader.GetString(reader.GetOrdinal("CohortName"))
                             }
                         };
                         // close the reader
@@ -446,7 +464,7 @@ namespace StudentExercisesMVC.Controllers
                             Cohort = new Cohort
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("CohortId")),
-                                CohortName = reader.GetString(reader.GetOrdinal("CohortName"))
+                                Name = reader.GetString(reader.GetOrdinal("CohortName"))
                             }
                         };
                     }
@@ -476,7 +494,7 @@ namespace StudentExercisesMVC.Controllers
                         cohorts.Add(new Cohort
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            CohortName = reader.GetString(reader.GetOrdinal("name"))
+                            Name = reader.GetString(reader.GetOrdinal("name"))
                         });
                     }
                     reader.Close();

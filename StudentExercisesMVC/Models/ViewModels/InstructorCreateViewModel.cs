@@ -31,7 +31,7 @@ namespace StudentExercisesMVC.Models.ViewModels
                         Cohorts.Add(new Cohort
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            CohortName = reader.GetString(reader.GetOrdinal("name"))
+                            Name = reader.GetString(reader.GetOrdinal("name"))
                         });
                     }
                     reader.Close();
@@ -50,7 +50,7 @@ namespace StudentExercisesMVC.Models.ViewModels
                 return Cohorts.Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
-                    Text = c.CohortName
+                    Text = c.Name
                 }).ToList();
             }
         }

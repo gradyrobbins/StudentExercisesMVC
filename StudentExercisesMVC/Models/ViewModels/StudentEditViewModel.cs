@@ -22,7 +22,7 @@ namespace StudentExercisesMVC.Models.ViewModels
                 return Cohorts.Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
-                    Text = c.CohortName
+                    Text = c.Name
                 }).ToList();
             }
         }
