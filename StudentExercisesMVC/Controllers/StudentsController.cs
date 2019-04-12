@@ -38,16 +38,16 @@ namespace StudentExercisesMVC.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-           SELECT  s.[Id]
-      ,[FirstName]
-      ,[LastName]
-      ,[SlackHandle]
-      ,[CohortId]
-	  ,[Name]
-  FROM Student s
-  INNER JOIN Cohort c
-  ON s.CohortId = c.Id;
-        ";
+                                          SELECT  s.[Id]
+                                                  ,[FirstName]
+                                                  ,[LastName]
+                                                  ,[SlackHandle]
+                                                  ,[CohortId]
+	                                              ,[Name]
+                                                   FROM Student s
+                                                   INNER JOIN Cohort c
+                                                   ON s.CohortId = c.Id;
+                                                    ";
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     List<Student> students = new List<Student>();
