@@ -16,15 +16,24 @@ namespace StudentExercisesMVC.Models
 {
     public class Student{
         public int Id { get; set; }
+        [Display(Name = "First Name")]
         public string FirstName {get ; set; }
+
+        [Display(Name = "Last Name")]
         public string LastName {get; set; }
+
+        [Display(Name = "Slack Handle")]
         public string SlackHandle {get; set;}
+
+        [Display(Name = "Cohort Id")]
         public int CohortId {get; set;}
+
+
         public Cohort Cohort { get; set; }
 
         public List<Exercise> ExerciseList { get; set; } = new List<Exercise>();
 
-        [Display(Name = "Full Name")]
+        [Display(Name = "Name")]
         public string FullName
         {
             get { return $"{FirstName} {LastName}"; }

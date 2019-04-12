@@ -19,6 +19,7 @@ namespace StudentExercisesMVC.Models
         //Message "Cohort name should be in fofmat of[Day|Evening [number]"
         [RegularExpression(@"(\bday\b|\bDay\b|\bevening\b|\bEvening\b)\s(\b\d{1,2})")]
 
+        [Display(Name = "Cohort")]
         public string Name {get; set;}
         public List<Student> rosterOfStudents { get; set; } = new List<Student>();
         public List<Instructor> rosterOfInstructors { get; set; } = new List<Instructor>();
