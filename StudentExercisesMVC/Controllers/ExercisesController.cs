@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using StudentExercisesMVC.Models;
-using StudentExercisesMVC.Models.ViewModels;
+
 
 
 namespace StudentExercisesMVC.Controllers
@@ -120,7 +120,7 @@ namespace StudentExercisesMVC.Controllers
         }
 
         // GET: Exercises/Create
-        // do i need to return a viewmodel?  Or is it okay to just return the standard view of "exercise" ?  for example students controller returns a viewmodel because it needs more information?
+        // do not need to return a viewmodel- just return the standard view of "exercise" ?  because it doesn't need more information than its own self contained properties/methods
         public ActionResult Create()
         {
             return View();
@@ -162,23 +162,54 @@ namespace StudentExercisesMVC.Controllers
         // GET: Exercises/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Exercise exercise = GetExerciseById(id);
+            if (exercise == null)
+            {
+                return NotFound();
+            }
+
+            
+
+            return View(exercise);
         }
+
+
+        //sample SQL
+        // UPDATE Exercise
+        //SET Name = 'BLoop', Language = 'Bleep'
+        //WHERE Exercise.Id = 3;
 
         // POST: Exercises/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Exercise exercise)
         {
             try
             {
-                // TODO: Add update logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Exercise 
+                                           SET Name = @name, 
+                                               Language = @language
+                                              
+                                         WHERE Exercise.id = @id;";
+                        cmd.Parameters.Add(new SqlParameter("@name", exercise.ExerciseName));
+                        cmd.Parameters.Add(new SqlParameter("@language", exercise.ExerciseLang));
+                        
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                return RedirectToAction(nameof(Index));
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {
-                return View();
+                return NotFound();
             }
         }
 
@@ -204,5 +235,51 @@ namespace StudentExercisesMVC.Controllers
                 return View();
             }
         }
+
+
+
+
+        private Exercise GetExerciseById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT e.Id AS ExerciseId,
+                                               e.Name AS ExerciseName,
+                                                e.Language AS ExerciseLanguage
+                                          FROM Exercise e 
+                                         WHERE  e.Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Exercise exercise = null;
+
+                    if (reader.Read())
+                    {
+                        exercise = new Exercise
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("ExerciseId")),
+                            ExerciseName = reader.GetString(reader.GetOrdinal("ExerciseName")),
+                            ExerciseLang = reader.GetString(reader.GetOrdinal("ExerciseLanguage"))
+                        };
+                    }
+
+                    reader.Close();
+
+                    return exercise;
+                }
+            }
+
+        }
+
+
+
+
+
     }
 }
+
+
+
