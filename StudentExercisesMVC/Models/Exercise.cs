@@ -12,14 +12,16 @@ namespace StudentExercisesMVC.Models
     {
 
        
-
+        [Required]
         public int Id { get; set; }
 
+        [Required]
         [Display(Name = "Exercise Name")]
-        public string ExerciseName {get;set;}
+        public string ExerciseName { get; set; }
 
+        [Required]
         [Display(Name = " Language")]
-        public string ExerciseLang {get;set;}
+        public string ExerciseLang { get; set; }
 
     }
 

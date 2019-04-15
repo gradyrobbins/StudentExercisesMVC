@@ -177,7 +177,7 @@ namespace StudentExercisesMVC.Controllers
         }
 
         // GET: Students/Edit/5
-        // don't fully understand what's going on here.  Why 171?
+        // don't fully understand what's going on here.  
         public ActionResult Edit(int id)
         {
             Student student = GetStudentById(id);

@@ -120,21 +120,38 @@ namespace StudentExercisesMVC.Controllers
         }
 
         // GET: Exercises/Create
+        // do i need to return a viewmodel?  Or is it okay to just return the standard view of "exercise" ?  for example students controller returns a viewmodel because it needs more information?
         public ActionResult Create()
         {
             return View();
         }
 
+
+
+        
+
         // POST: Exercises/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Exercise exercise)
         {
             try
             {
-                // TODO: Add insert logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO exercise ([Name], [Language])
+                                           VALUES (@ExerciseName, @ExerciseLang)";
+                        cmd.Parameters.Add(new SqlParameter("@ExerciseName", exercise.ExerciseName));
+                        cmd.Parameters.Add(new SqlParameter("@ExerciseLang", exercise.ExerciseLang));
+                        
+                        cmd.ExecuteNonQuery();
 
-                return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {
