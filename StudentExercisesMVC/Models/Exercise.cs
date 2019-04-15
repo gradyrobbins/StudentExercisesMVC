@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace StudentExercisesMVC.Models
 
 // You must define a type for representing an exercise in code. An exercise can be assigned to many students.
@@ -8,12 +10,15 @@ namespace StudentExercisesMVC.Models
 {
    public class Exercise
     {
-        public Exercise(string exerciseName, string exerciseLang) {
-            ExerciseName = exerciseName;
-            ExerciseLang = exerciseLang;
 
-        }
+       
+
+        public int Id { get; set; }
+
+        [Display(Name = "Exercise Name")]
         public string ExerciseName {get;set;}
+
+        [Display(Name = " Language")]
         public string ExerciseLang {get;set;}
 
     }
